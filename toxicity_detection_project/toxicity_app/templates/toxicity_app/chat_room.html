@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>League Nexus Chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Beaufort+for+LOL:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: url('/api/placeholder/32/32') 10 10, auto !important;
+        }
+        
+        body {
+            font-family: 'Beaufort for LOL', 'Century Gothic', sans-serif;
+            background-color: #010A13;
+            color: #C8AA6E;
+            background-image: url('/api/placeholder/1920/1080');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 2px solid #785A28;
+            margin-bottom: 15px;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #F0E6D2;
+            text-shadow: 0 0 10px #C8AA6E;
+            letter-spacing: 1px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #1E2328;
+            border: 2px solid #C8AA6E;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .username {
+            font-weight: bold;
+            color: #F0E6D2;
+        }
+        
+        .room-name {
+            font-size: 14px;
+            color: #A09B8C;
+        }
+        
+        .chat-container {
+            display: flex;
+            height: calc(100% - 130px);
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: rgba(30, 35, 40, 0.8);
+            border: 1px solid #785A28;
+            border-radius: 4px;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        
+        .online-users {
+            margin-bottom: 20px;
+        }
+        
+        .sidebar h3 {
+            font-size: 18px;
+            color: #F0E6D2;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #785A28;
+            padding-bottom: 5px;
+        }
+        
+        .user-list {
+            list-style: none;
+        }
+        
+        .user-list li {
+            padding: 8px 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+        
+        .user-list li:hover {
+            background-color: #1E2328;
+        }
+        
+        .user-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #0ACF83;
+        }
+        
+        .user-list li span {
+            color: #A09B8C;
+        }
+        
+        .chat-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #chat-log {
+            flex: 1;
+            background-color: rgba(30, 35, 40, 0.8);
+            border: 1px solid #785A28;
+            border-radius: 4px;
+            padding: 15px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        
+        .message-username {
+            font-weight: bold;
+            color: #F0E6D2;
+        }
+        
+        .message-time {
+            font-size: 12px;
+            color: #A09B8C;
+        }
+        
+        .message-content {
+            padding: 10px;
+            background-color: rgba(7, 16, 25, 0.7);
+            border-radius: 4px;
+            color: #A09B8C;
+            border-left: 3px solid #785A28;
+        }
+        
+        .my-message .message-content {
+            background-color: rgba(12, 73, 99, 0.7);
+            border-left: 3px solid #0AC8B9;
+        }
+        
+        .toxic-warning {
+            color: #ff4655;
+            font-weight: bold;
+            background-color: rgba(255, 70, 85, 0.1);
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin-top: 5px;
+            border: 1px solid #ff4655;
+            font-size: 12px;
+        }
+        
+        .message-input-container {
+            display: flex;
+            gap: 10px;
+            position: relative;
+        }
+        
+        #chat-message-input {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 4px;
+            border: 1px solid #785A28;
+            background-color: rgba(30, 35, 40, 0.8);
+            color: #F0E6D2;
+            font-family: inherit;
+        }
+        
+        #chat-message-input:focus {
+            outline: none;
+            border-color: #C8AA6E;
+            box-shadow: 0 0 10px rgba(200, 170, 110, 0.3);
+        }
+        
+        #chat-message-submit {
+            padding: 12px 25px;
+            background: linear-gradient(to bottom, #C8AA6E, #785A28);
+            color: #121212;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            font-family: inherit;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+        }
+        
+        #chat-message-submit:hover {
+            background: linear-gradient(to bottom, #F0E6D2, #C8AA6E);
+            box-shadow: 0 0 15px rgba(200, 170, 110, 0.5);
+        }
+        
+        .emote-picker {
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            width: 300px;
+            background-color: rgba(30, 35, 40, 0.95);
+            border: 1px solid #785A28;
+            border-radius: 4px;
+            padding: 15px;
+            display: none;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .emote {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #1E2328;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        
+        .emote:hover {
+            background-color: #785A28;
+        }
+        
+        .message-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(30, 35, 40, 0.8);
+            border: 1px solid #785A28;
+            border-radius: 4px;
+            color: #C8AA6E;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            background-color: #785A28;
+            color: #F0E6D2;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(30, 35, 40, 0.5);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #785A28;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #C8AA6E;
+        }
+        
+        /* Game loading animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #010A13;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .loading-logo {
+            font-size: 48px;
+            color: #C8AA6E;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px #C8AA6E;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        
+        .loading-bar-container {
+            width: 300px;
+            height: 20px;
+            background-color: #1E2328;
+            border: 1px solid #785A28;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .loading-bar {
+            height: 100%;
+            background: linear-gradient(to right, #0AC8B9, #0ACF83);
+            width: 0%;
+            transition: width 3s ease-in-out;
+        }
+        
+        .loading-text {
+            color: #A09B8C;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-logo">LEAGUE NEXUS</div>
+        <div class="loading-bar-container">
+            <div class="loading-bar" id="loading-bar"></div>
+        </div>
+        <div class="loading-text">Loading your champion...</div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo">LEAGUE NEXUS CHAT</div>
+            <div class="user-info">
+                <div class="room-info">
+                    <div class="username" id="display-username">{{ username }}</div>
+                    <div class="room-name">Room: {{ room_name }}</div>
+                </div>
+                <div class="avatar">
+                    <i class="fa-solid fa-mask"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chat-container">
+            <div class="sidebar">
+                <div class="online-users">
+                    <h3>Online Summoners</h3>
+                    <ul class="user-list">
+                        <li>
+                            <div class="user-status"></div>
+                            <span>{{ username }}</span>
+                        </li>
+                        <li>
+                            <div class="user-status"></div>
+                            <span>Faker</span>
+                        </li>
+                        <li>
+                            <div class="user-status"></div>
+                            <span>TheShy</span>
+                        </li>
+                        <li>
+                            <div class="user-status"></div>
+                            <span>Uzi</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="champions">
+                    <h3>Favorite Champions</h3>
+                    <ul class="user-list">
+                        <li><span>Yasuo</span></li>
+                        <li><span>Lux</span></li>
+                        <li><span>Jinx</span></li>
+                        <li><span>Zed</span></li>
+                        <li><span>Ahri</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="chat-content">
+                <div id="chat-log">
+                
+                    <div class="message">
+                        <div class="message-header">
+                            <span class="message-username">System</span>
+                            <span class="message-time">Just now</span>
+                        </div>
+                        <div class="message-content">
+                            Welcome to League Nexus Chat! Please be respectful to other summoners.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="message-controls">
+                    <div class="action-buttons">
+                        <button class="action-btn" id="emote-btn">
+                            <i class="fa-solid fa-face-laugh"></i>
+                        </button>
+                      
+                    </div>
+                    
+                    <div class="message-input-container">
+                        <input id="chat-message-input" type="text" placeholder="Type your message here, summoner...">
+                        <button id="chat-message-submit">SEND</button>
+                        
+                       
+                        <div class="emote-picker" id="emote-picker">
+                            <div class="emote">👍</div>
+                            <div class="emote">😂</div>
+                            <div class="emote">🎮</div>
+                            <div class="emote">❤️</div>
+                            <div class="emote">🔥</div>
+                            <div class="emote">⚔️</div>
+                            <div class="emote">🛡️</div>
+                            <div class="emote">👑</div>
+                            <div class="emote">💪</div>
+                            <div class="emote">🤔</div>
+                            <div class="emote">😭</div>
+                            <div class="emote">🤬</div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                </div>
+                
+                <script>
+                    // Loading animation
+                  // Loading animation
+window.addEventListener('load', function() {
+    const loadingBar = document.getElementById('loading-bar');
+    const loadingOverlay = document.getElementById('loading-overlay');
+    
+    // Simulate loading progress
+    let progress = 0;
+    const interval = setInterval(function() {
+        progress += 5;
+        loadingBar.style.width = progress + '%';
+        
+        if (progress >= 100) {
+            clearInterval(interval);
+            setTimeout(function() {
+                loadingOverlay.style.display = 'none';
+            }, 500);
+        }
+    }, 150);
+    
+
+    const chatInput = document.getElementById('chat-message-input');
+    const chatSubmit = document.getElementById('chat-message-submit');
+    const chatLog = document.getElementById('chat-log');
+    const emoteBtn = document.getElementById('emote-btn');
+    const emotePicker = document.getElementById('emote-picker');
+    const emotes = document.querySelectorAll('.emote');
+    const username = document.getElementById('display-username').textContent;
+    const roomName = document.querySelector('.room-name').textContent.replace('Room: ', '');
+    
+    
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
+    );
+    
+    chatSocket.onopen = function(e) {
+        console.log('WebSocket connection established');
+    };
+    
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        
+     
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
+        
+       
+        if (data.username === username) {
+            messageDiv.classList.add('my-message');
+        }
+        
+        const timestamp = new Date();
+        const formattedTime = timestamp.getHours() + ':' + 
+            (timestamp.getMinutes() < 10 ? '0' : '') + timestamp.getMinutes();
+        
+        messageDiv.innerHTML = `
+            <div class="message-header">
+                <span class="message-username">${data.username}</span>
+                <span class="message-time">${formattedTime}</span>
+            </div>
+            <div class="message-content">
+                ${data.message}
+            </div>
+        `;
+        
+     
+        if (data.is_toxic) {
+            const warningDiv = document.createElement('div');
+            warningDiv.classList.add('toxic-warning');
+            warningDiv.textContent = data.warning || 'Warning: This message may violate the Summoner\'s Code';
+            messageDiv.appendChild(warningDiv);
+        }
+        
+        chatLog.appendChild(messageDiv);
+        chatLog.scrollTop = chatLog.scrollHeight;
+    };
+    
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+        
+
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', 'system-message');
+        
+        const timestamp = new Date();
+        const formattedTime = timestamp.getHours() + ':' + 
+            (timestamp.getMinutes() < 10 ? '0' : '') + timestamp.getMinutes();
+        
+        messageDiv.innerHTML = `
+            <div class="message-header">
+                <span class="message-username">System</span>
+                <span class="message-time">${formattedTime}</span>
+            </div>
+            <div class="message-content">
+                Connection lost. Please refresh the page to reconnect.
+            </div>
+        `;
+        
+        chatLog.appendChild(messageDiv);
+        chatLog.scrollTop = chatLog.scrollHeight;
+    };
+    
+    
+    emoteBtn.addEventListener('click', function() {
+        emotePicker.style.display = emotePicker.style.display === 'grid' ? 'none' : 'grid';
+    });
+    
+    
+    emotes.forEach(emote => {
+        emote.addEventListener('click', function() {
+            chatInput.value += emote.textContent;
+            emotePicker.style.display = 'none';
+        });
+    });
+    
+    
+    function sendMessage() {
+        const message = chatInput.value.trim();
+        if (message) {
+        
+            chatSocket.send(JSON.stringify({
+                'username': username,
+                'message': message
+            }));
+            
+            chatInput.value = '';
+        }
+    }
+    
+    chatSubmit.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+});
+                </script>
+                </body>
+                </html>
