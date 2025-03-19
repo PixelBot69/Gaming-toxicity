@@ -299,6 +299,139 @@
             color: #F0E6D2;
         }
         
+        /* Report feature styling */
+        .message-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+            justify-content: flex-end;
+        }
+        
+        .report-btn {
+            padding: 2px 8px;
+            font-size: 12px;
+            background-color: rgba(255, 70, 85, 0.2);
+            color: #ff4655;
+            border: 1px solid #ff4655;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .report-btn:hover {
+            background-color: rgba(255, 70, 85, 0.4);
+        }
+        
+        .report-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .report-content {
+            width: 400px;
+            background-color: #1E2328;
+            border: 2px solid #785A28;
+            border-radius: 4px;
+            padding: 20px;
+        }
+        
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #785A28;
+        }
+        
+        .report-title {
+            font-size: 18px;
+            color: #F0E6D2;
+            font-weight: bold;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: #A09B8C;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        .close-btn:hover {
+            color: #F0E6D2;
+        }
+        
+        .report-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .report-message {
+            padding: 10px;
+            background-color: rgba(7, 16, 25, 0.7);
+            border-radius: 4px;
+            color: #A09B8C;
+            border-left: 3px solid #785A28;
+            margin-bottom: 15px;
+        }
+        
+        .report-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .report-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .report-option input {
+            accent-color: #C8AA6E;
+        }
+        
+        .report-option label {
+            color: #A09B8C;
+        }
+        
+        .report-submit {
+            padding: 10px;
+            background: linear-gradient(to bottom, #C8AA6E, #785A28);
+            color: #121212;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            font-family: inherit;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+        
+        .report-submit:hover {
+            background: linear-gradient(to bottom, #F0E6D2, #C8AA6E);
+            box-shadow: 0 0 15px rgba(200, 170, 110, 0.5);
+        }
+        
+        .feedback-message {
+            text-align: center;
+            font-size: 16px;
+            color: #0ACF83;
+            margin-top: 10px;
+            padding: 10px;
+            display: none;
+        }
+        
         /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
@@ -445,14 +578,12 @@
                         <button class="action-btn" id="emote-btn">
                             <i class="fa-solid fa-face-laugh"></i>
                         </button>
-                      
                     </div>
                     
                     <div class="message-input-container">
                         <input id="chat-message-input" type="text" placeholder="Type your message here, summoner...">
                         <button id="chat-message-submit">SEND</button>
                         
-                       
                         <div class="emote-picker" id="emote-picker">
                             <div class="emote">👍</div>
                             <div class="emote">😂</div>
@@ -469,146 +600,252 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Report Modal -->
+    <div class="report-modal" id="report-modal">
+        <div class="report-content">
+            <div class="report-header">
+                <div class="report-title">Report Message</div>
+                <button class="close-btn" id="close-report-modal">&times;</button>
+            </div>
+            <div class="report-message" id="report-message-content"></div>
+            <form class="report-form" id="report-form">
+                <input type="hidden" id="report-message-id" name="message_id">
+                <input type="hidden" id="report-message-text" name="message_text">
+                <div class="report-options">
+                    <div class="report-option">
+                        <input type="radio" id="hate-speech" name="report-type" value="0" checked>
+                        <label for="hate-speech">Hate Speech</label>
+                    </div>
+                    <div class="report-option">
+                        <input type="radio" id="offensive" name="report-type" value="1">
+                        <label for="offensive">Offensive Language</label>
+                    </div>
+                    <div class="report-option">
+                        <input type="radio" id="false-positive" name="report-type" value="2">
+                        <label for="false-positive">Not Toxic (False Positive)</label>
+                    </div>
                 </div>
+                <button type="submit" class="report-submit">SUBMIT REPORT</button>
+                <div class="feedback-message" id="feedback-message">
+                    Thank you for your report! It will help improve our moderation system.
                 </div>
-                
-                <script>
-                    // Loading animation
-                  // Loading animation
-window.addEventListener('load', function() {
-    const loadingBar = document.getElementById('loading-bar');
-    const loadingOverlay = document.getElementById('loading-overlay');
-    
-    // Simulate loading progress
-    let progress = 0;
-    const interval = setInterval(function() {
-        progress += 5;
-        loadingBar.style.width = progress + '%';
-        
-        if (progress >= 100) {
-            clearInterval(interval);
-            setTimeout(function() {
-                loadingOverlay.style.display = 'none';
-            }, 500);
-        }
-    }, 150);
-    
+            </form>
+        </div>
+    </div>
 
-    const chatInput = document.getElementById('chat-message-input');
-    const chatSubmit = document.getElementById('chat-message-submit');
-    const chatLog = document.getElementById('chat-log');
-    const emoteBtn = document.getElementById('emote-btn');
-    const emotePicker = document.getElementById('emote-picker');
-    const emotes = document.querySelectorAll('.emote');
-    const username = document.getElementById('display-username').textContent;
-    const roomName = document.querySelector('.room-name').textContent.replace('Room: ', '');
-    
-    
-    const chatSocket = new WebSocket(
-        'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
-    );
-    
-    chatSocket.onopen = function(e) {
-        console.log('WebSocket connection established');
-    };
-    
-    chatSocket.onmessage = function(e) {
-        const data = JSON.parse(e.data);
-        
-     
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message');
-        
-       
-        if (data.username === username) {
-            messageDiv.classList.add('my-message');
-        }
-        
-        const timestamp = new Date();
-        const formattedTime = timestamp.getHours() + ':' + 
-            (timestamp.getMinutes() < 10 ? '0' : '') + timestamp.getMinutes();
-        
-        messageDiv.innerHTML = `
-            <div class="message-header">
-                <span class="message-username">${data.username}</span>
-                <span class="message-time">${formattedTime}</span>
-            </div>
-            <div class="message-content">
-                ${data.message}
-            </div>
-        `;
-        
-     
-        if (data.is_toxic) {
-            const warningDiv = document.createElement('div');
-            warningDiv.classList.add('toxic-warning');
-            warningDiv.textContent = data.warning || 'Warning: This message may violate the Summoner\'s Code';
-            messageDiv.appendChild(warningDiv);
-        }
-        
-        chatLog.appendChild(messageDiv);
-        chatLog.scrollTop = chatLog.scrollHeight;
-    };
-    
-    chatSocket.onclose = function(e) {
-        console.error('Chat socket closed unexpectedly');
-        
-
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message', 'system-message');
-        
-        const timestamp = new Date();
-        const formattedTime = timestamp.getHours() + ':' + 
-            (timestamp.getMinutes() < 10 ? '0' : '') + timestamp.getMinutes();
-        
-        messageDiv.innerHTML = `
-            <div class="message-header">
-                <span class="message-username">System</span>
-                <span class="message-time">${formattedTime}</span>
-            </div>
-            <div class="message-content">
-                Connection lost. Please refresh the page to reconnect.
-            </div>
-        `;
-        
-        chatLog.appendChild(messageDiv);
-        chatLog.scrollTop = chatLog.scrollHeight;
-    };
-    
-    
-    emoteBtn.addEventListener('click', function() {
-        emotePicker.style.display = emotePicker.style.display === 'grid' ? 'none' : 'grid';
-    });
-    
-    
-    emotes.forEach(emote => {
-        emote.addEventListener('click', function() {
-            chatInput.value += emote.textContent;
-            emotePicker.style.display = 'none';
-        });
-    });
-    
-    
-    function sendMessage() {
-        const message = chatInput.value.trim();
-        if (message) {
-        
-            chatSocket.send(JSON.stringify({
-                'username': username,
-                'message': message
-            }));
+    <script>
+        // Loading animation
+        window.addEventListener('load', function() {
+            const loadingBar = document.getElementById('loading-bar');
+            const loadingOverlay = document.getElementById('loading-overlay');
             
-            chatInput.value = '';
-        }
+            // Simulate loading progress
+            let progress = 0;
+            const interval = setInterval(function() {
+                progress += 5;
+                loadingBar.style.width = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(function() {
+                        loadingOverlay.style.display = 'none';
+                    }, 500);
+                }
+            }, 150);
+            
+            const chatInput = document.getElementById('chat-message-input');
+            const chatSubmit = document.getElementById('chat-message-submit');
+            const chatLog = document.getElementById('chat-log');
+            const emoteBtn = document.getElementById('emote-btn');
+            const emotePicker = document.getElementById('emote-picker');
+            const emotes = document.querySelectorAll('.emote');
+            const username = document.getElementById('display-username').textContent;
+            const roomName = document.querySelector('.room-name').textContent.replace('Room: ', '');
+            
+            // Report modal elements
+            const reportModal = document.getElementById('report-modal');
+            const closeReportBtn = document.getElementById('close-report-modal');
+            const reportForm = document.getElementById('report-form');
+            const reportMessageContent = document.getElementById('report-message-content');
+            const reportMessageId = document.getElementById('report-message-id');
+            const reportMessageText = document.getElementById('report-message-text');
+            const feedbackMessage = document.getElementById('feedback-message');
+            
+            // Initialize message ID counter
+            let messageIdCounter = 0;
+            
+            const chatSocket = new WebSocket(
+                'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
+            );
+            
+            chatSocket.onopen = function(e) {
+                console.log('WebSocket connection established');
+            };
+            
+            <!-- Replace or modify the existing message creation code in your script section -->
+
+chatSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    
+    // Handle report confirmation
+    if (data.type === 'report_confirmation') {
+        console.log(data.message);
+        return;
     }
     
-    chatSubmit.addEventListener('click', sendMessage);
-    chatInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            sendMessage();
-        }
-    });
-});
-                </script>
-                </body>
-                </html>
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message');
+    messageDiv.dataset.messageId = messageIdCounter++;
+    
+    if (data.username === username) {
+        messageDiv.classList.add('my-message');
+    }
+    
+    const timestamp = new Date();
+    const formattedTime = timestamp.getHours() + ':' + 
+        (timestamp.getMinutes() < 10 ? '0' : '') + timestamp.getMinutes();
+    
+    messageDiv.innerHTML = `
+        <div class="message-header">
+            <span class="message-username">${data.username}</span>
+            <span class="message-time">${formattedTime}</span>
+        </div>
+        <div class="message-content">
+            ${data.message}
+        </div>
+    `;
+    
+    // Add report button for messages from other users
+    if (data.username !== username) {
+        const messageActions = document.createElement('div');
+        messageActions.classList.add('message-actions');
+        
+        const reportBtn = document.createElement('button');
+        reportBtn.classList.add('report-btn');
+        reportBtn.textContent = 'Report';
+        reportBtn.addEventListener('click', function() {
+            openReportModal(messageDiv.dataset.messageId, data.message);
+        });
+        
+        messageActions.appendChild(reportBtn);
+        messageDiv.appendChild(messageActions);
+    }
+    
+    if (data.is_toxic) {
+        const warningDiv = document.createElement('div');
+        warningDiv.classList.add('toxic-warning');
+        warningDiv.textContent = data.warning || 'Warning: This message may violate the Summoner\'s Code';
+        messageDiv.appendChild(warningDiv);
+    }
+    
+    chatLog.appendChild(messageDiv);
+    chatLog.scrollTop = chatLog.scrollHeight;
+};
+            
+            chatSocket.onclose = function(e) {
+                console.error('Chat socket closed unexpectedly');
+                
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', 'system-message');
+                
+                const timestamp = new Date();
+                const formattedTime = timestamp.getHours() + ':' + 
+                    (timestamp.getMinutes() < 10 ? '0' : '') + timestamp.getMinutes();
+                
+                messageDiv.innerHTML = `
+                    <div class="message-header">
+                        <span class="message-username">System</span>
+                        <span class="message-time">${formattedTime}</span>
+                    </div>
+                    <div class="message-content">
+                        Connection lost. Please refresh the page to reconnect.
+                    </div>
+                `;
+                
+                chatLog.appendChild(messageDiv);
+                chatLog.scrollTop = chatLog.scrollHeight;
+            };
+            
+            emoteBtn.addEventListener('click', function() {
+                emotePicker.style.display = emotePicker.style.display === 'grid' ? 'none' : 'grid';
+            });
+            
+            emotes.forEach(emote => {
+                emote.addEventListener('click', function() {
+                    chatInput.value += emote.textContent;
+                    emotePicker.style.display = 'none';
+                });
+            });
+            
+            function sendMessage() {
+                const message = chatInput.value.trim();
+                if (message) {
+                    chatSocket.send(JSON.stringify({
+                        'username': username,
+                        'message': message
+                    }));
+                    
+                    chatInput.value = '';
+                }
+            }
+            
+            chatSubmit.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // Report modal functions
+            function openReportModal(messageId, messageText) {
+                reportMessageId.value = messageId;
+                reportMessageText.value = messageText;
+                reportMessageContent.textContent = messageText;
+                reportModal.style.display = 'flex';
+                feedbackMessage.style.display = 'none';
+            }
+            
+            closeReportBtn.addEventListener('click', function() {
+                reportModal.style.display = 'none';
+            });
+            
+            reportForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const reportType = document.querySelector('input[name="report-type"]:checked').value;
+                const messageId = reportMessageId.value;
+                const messageText = reportMessageText.value;
+                const reportedUsername = document.querySelector(`[data-message-id="${messageId}"] .message-username`).textContent;
+                
+                // Send report to backend
+                chatSocket.send(JSON.stringify({
+                    'type': 'report',
+                    'message_id': messageId,
+                    'message_text': messageText,
+                    'report_type': reportType,
+                    'reporter_username': username,
+                    'reported_username': reportedUsername
+                }));
+                
+                feedbackMessage.style.display = 'block';
+                
+                // Auto-close after 3 seconds
+                setTimeout(function() {
+                    reportModal.style.display = 'none';
+                }, 3000);
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === reportModal) {
+                    reportModal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
